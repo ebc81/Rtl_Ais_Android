@@ -1,0 +1,27 @@
+.gradle
+/local.properties
+/.idea/workspace.xml
+/.idea/libraries
+.DS_Store
+/build
+/captures
+# Built application files
+*.apk
+*.ap_
+# Shared objects (inc. Windows DLLs)
+*.dll
+*.so
+*.so.*
+*.dylib
+# Libraries
+*.lib
+*.a
+# Object files
+*.o
+*.ko
+*.obj
+*.elf
+# Log Files
+*.log
+
+*.o.d

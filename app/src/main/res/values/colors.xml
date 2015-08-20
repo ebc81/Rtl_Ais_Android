@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="bg">#2F383F</color>
+    <color name="overlay_bg">#BB2F383F</color>
+    <color name="overlay">#33000000</color>
+    <color name="primary_text_tab">#FFFFFF</color>
+    <color name="secondary_text_tab">#AAFFFFFF</color>
+    <!-- http://www.materialpalette.com/indigo/pink -->
+    <color name="primary">#3F51B5</color>
+    <color name="primary_dark">#303F9F</color>
+    <color name="primary_light">#C5CAE9</color>
+    <color name="accent">#FF4081</color>
+    <color name="primary_text">#212121</color>
+    <color name="secondary_text">#727272</color>
+
+
+</resources>

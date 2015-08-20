@@ -1,0 +1,29 @@
+rtl_ais_android
+
+Brings the rtl_ais to the Android plattform
+
+
+
+Is an application that allows you to send NMEA message in your Android applications or to other applications.
+Sending is done via UDP network stream
+
+All you need is to launch an intent in the form "iqsrc://rtl_tcp_arguments" where you replace rtl_tcp_arguments with the arguments that you want your application to run rtl_tcp with and the magic will be done behind the scenes! More HOWTO coming soon!
+
+Internals:
+
+Port of rtl_tcp_andro driver from Martin Marinov https://github.com/martinmarinov/rtl_tcp_andro-
+Port of the rtl_ais project https://github.com/dgiardini/rtl-ais
+
+The modifications are released under GNU. See COPYING for details. 
+ 
+For more information on rtl_tcp_andro
+https://github.com/martinmarinov/rtl_tcp_andro-
+ 
+For more information on rtl_ais
+https://github.com/dgiardini/rtl-ais
+ 
+For more information on rtl-sdr: 
+http://sdr.osmocom.org/trac/wiki/rtl-sdr 
+ 
+For more information on libusb: 
+http://www.libusb.org/
