@@ -769,8 +769,9 @@ void rtl_ais_main(int usbfd, const char * uspfs_path_input, int argc, char **arg
 /* Aisdecoder */
 	int	show_levels=0;
 	int debug_nmea = 0;
-	char * ais_port=NULL;
-	char * ais_host=NULL;
+	char ais_port[50];
+	char ais_host[50];
+	char *pos;
 	int count;
     int gains[100];
     int bandwidths[100];
@@ -790,6 +791,8 @@ void rtl_ais_main(int usbfd, const char * uspfs_path_input, int argc, char **arg
 	int without_tcp_worker = 0;
 	//ebc
 	//------------------------------------------------------
+	ais_port[0] = '\000';
+	ais_host[0] = '\000';
 	set_isrunning(1);
 	if (usbfd != -1 && (!(fcntl(usbfd, F_GETFL) != -1 || errno != EBADF))) {
 		aprintf_stderr("Invalid file descriptor %d, - %s", usbfd, strerror(errno));
@@ -845,14 +848,21 @@ void rtl_ais_main(int usbfd, const char * uspfs_path_input, int argc, char **arg
 			use_internal_aisdecoder=0;
 			break;
 		case 'P':
-			ais_port=strdup(optarg);
+			strncpy(ais_port,optarg,sizeof(ais_port));			
+			
+			if ((pos=strchr(ais_port, '\n')) != NULL)
+				*pos = '\0';
+			//ais_port=strdup(optarg);
 			break;
         case 'w':
             bandwidth = atoi(optarg);
             custom_bandwidth = 1;
             break;
 		case 'h':
-			ais_host=strdup(optarg);
+			strncpy(ais_host,optarg,sizeof(ais_host));
+			if ((pos=strchr(ais_host, '\n')) != NULL)
+				*pos = '\0';
+			//ais_host=strdup(optarg);
 			break;
         case 'n':
             debug_nmea = 1;
@@ -894,11 +904,13 @@ void rtl_ais_main(int usbfd, const char * uspfs_path_input, int argc, char **arg
 		return;// 2;
 	}
 	
-	if(ais_host==NULL){
-		ais_host=strdup("127.0.0.1");
+	if(ais_host==NULL || ais_host[0] == '\000'){
+		sprintf(ais_host,"127.0.0.1");
+		//ais_host=strdup("127.0.0.1");
 	}
-	if(ais_port==NULL){
-		ais_port=strdup("10110");
+	if(ais_port==NULL || ais_port[0] == '\000'){
+		sprintf(ais_port,"127.0.0.1");
+		//ais_port=strdup("10110");
 	}
 	
 	/* precompute rates */

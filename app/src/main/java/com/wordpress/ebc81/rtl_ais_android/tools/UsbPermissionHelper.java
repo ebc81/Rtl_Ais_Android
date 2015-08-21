@@ -197,7 +197,7 @@ public class UsbPermissionHelper {
         } catch (InterruptedException e) {}
 
         if (proc.exitValue() != 0) {
-            Log.appendLine("Root refused to give permissions.");
+            LogRtlAis.appendLine("Root refused to give permissions.");
             throw new RtlStartException(err_info.permission_denied);
         }
     }

@@ -43,10 +43,10 @@ import android.widget.ToggleButton;
 
 import com.wordpress.ebc81.rtl_ais_android.tools.DialogManager;
 import com.wordpress.ebc81.rtl_ais_android.tools.DialogManager.dialogs;
-import com.wordpress.ebc81.rtl_ais_android.tools.Log;
+import com.wordpress.ebc81.rtl_ais_android.tools.LogRtlAis;
 import com.wordpress.ebc81.rtl_ais_android.tools.RtlStartException.err_info;
 
-public class StreamActivity extends FragmentActivity implements Log.Callback {
+public class StreamActivity extends FragmentActivity implements LogRtlAis.Callback {
 
     public static final String PREFS_NAME = "rtl_ais_androidPREFS";
     public static final String DISABLE_JAVA_FIX_PREF = "disable.java.usb.fix";
@@ -70,7 +70,7 @@ public class StreamActivity extends FragmentActivity implements Log.Callback {
         scroll = (ScrollView) findViewById(R.id.ScrollArea);
         arguments = (EditText) findViewById(R.id.commandline);
 
-        terminal.setText(Log.getFullLog());
+        terminal.setText(LogRtlAis.getFullLog());
 
         ((Button) findViewById(R.id.enable_gui)).setOnClickListener(new View.OnClickListener() {
 
@@ -101,9 +101,20 @@ public class StreamActivity extends FragmentActivity implements Log.Callback {
             @Override
             public void onClick(View v) {
                 onoff.setChecked(false);
-                Log.clear();
-                String d3ebug  = arguments.getText().toString();
+                LogRtlAis.clear();
+                String d3ebug = arguments.getText().toString();
                 startActivityForResult(new Intent(Intent.ACTION_VIEW).setData(Uri.parse("iqsrc://" + arguments.getText().toString())), START_REQ_CODE);
+            }
+        });
+
+        ((Button) findViewById(R.id.stop)).setOnClickListener(new Button.OnClickListener() {
+
+            //@SuppressWarnings("deprecation")
+            //@SuppressLint("NewApi")
+            @Override
+            public void onClick(View v) {
+
+                startActivityForResult(new Intent(Intent.ACTION_VIEW).setData(Uri.parse("iqsrc://-exit")), START_REQ_CODE);
             }
         });
 
@@ -130,7 +141,7 @@ public class StreamActivity extends FragmentActivity implements Log.Callback {
         ((Button) findViewById(R.id.clearbutton)).setOnClickListener(new Button.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.clear();
+                LogRtlAis.clear();
             }
         });
 
@@ -181,27 +192,27 @@ public class StreamActivity extends FragmentActivity implements Log.Callback {
     @Override
     protected void onResume() {
         super.onResume();
-        terminal.setText(Log.getFullLog());
-        Log.registerCallback(this);
+        terminal.setText(LogRtlAis.getFullLog());
+        LogRtlAis.registerCallback(this);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        Log.unregisterCallback(this);
+        LogRtlAis.unregisterCallback(this);
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        terminal.setText(Log.getFullLog());
-        Log.registerCallback(this);
+        terminal.setText(LogRtlAis.getFullLog());
+        LogRtlAis.registerCallback(this);
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        Log.unregisterCallback(this);
+        LogRtlAis.unregisterCallback(this);
     }
 
     @Override
@@ -213,11 +224,11 @@ public class StreamActivity extends FragmentActivity implements Log.Callback {
             public void run() {
                 if (requestCode == START_REQ_CODE) {
                     if (resultCode == RESULT_OK)
-                        Log.appendLine("Starting was successful!");
+                        LogRtlAis.appendLine("Starting was successful!");
                     else {
                         err_info einfo = err_info.unknown_error;
                         try { einfo = err_info.values()[data.getIntExtra("com.wordpress.ebc81.rtl_ais_android.RtlExceptionId", err_info.unknown_error.ordinal())]; } catch (Throwable e) {};
-                        Log.appendLine("ERROR STARTING! Reason: "+einfo);
+                        LogRtlAis.appendLine("ERROR STARTING! Reason: " + einfo);
                     }
                 }
             }
@@ -229,7 +240,7 @@ public class StreamActivity extends FragmentActivity implements Log.Callback {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                terminal.setText(Log.getFullLog());
+                terminal.setText(LogRtlAis.getFullLog());
                 scroll.pageScroll(ScrollView.FOCUS_DOWN);
             }
         });

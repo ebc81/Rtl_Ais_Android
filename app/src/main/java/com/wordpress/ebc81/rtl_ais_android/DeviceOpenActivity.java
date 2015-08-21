@@ -45,7 +45,7 @@ import com.wordpress.ebc81.rtl_ais_android.core.RtlException;
 import com.wordpress.ebc81.rtl_ais_android.tools.BinaryRunnerService;
 import com.wordpress.ebc81.rtl_ais_android.tools.BinaryRunnerService.LocalBinder;
 import com.wordpress.ebc81.rtl_ais_android.tools.DialogManager;
-import com.wordpress.ebc81.rtl_ais_android.tools.Log;
+import com.wordpress.ebc81.rtl_ais_android.tools.LogRtlAis;
 import com.wordpress.ebc81.rtl_ais_android.tools.RtlStartException;
 import com.wordpress.ebc81.rtl_ais_android.tools.RtlStartException.err_info;
 import com.wordpress.ebc81.rtl_ais_android.tools.StrRes;
@@ -334,12 +334,12 @@ public class DeviceOpenActivity extends FragmentActivity implements BinaryRunner
                             openDevice(device);
                         } else {
                             finishWithError(err_info.permission_denied);
-                            Log.appendLine("Android OS granted permissions but device was lost (due to a bug?).");
+                            LogRtlAis.appendLine("Android OS granted permissions but device was lost (due to a bug?).");
                         }
                     }
                     else {
                         finishWithError(err_info.permission_denied);
-                        Log.appendLine("Android OS refused giving permissions.");
+                        LogRtlAis.appendLine("Android OS refused giving permissions.");
                     }
                 }
             }

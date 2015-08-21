@@ -24,10 +24,10 @@ package com.wordpress.ebc81.rtl_ais_android.tools;
 
 import java.util.ArrayList;
 
-public abstract class Log {
+public abstract class LogRtlAis {
     private final static StringBuilder log = new StringBuilder();
     private final static Object locker = new Object();
-    private final static ArrayList<Callback> callbacks = new ArrayList<Log.Callback>();
+    private final static ArrayList<Callback> callbacks = new ArrayList<LogRtlAis.Callback>();
 
 
     public static void appendLine(String what) {
@@ -37,7 +37,7 @@ public abstract class Log {
         what+="\n";
         synchronized (locker) {
             log.append(what);
-            for (final Log.Callback callback : callbacks) callback.onAppend(what);
+            for (final LogRtlAis.Callback callback : callbacks) callback.onAppend(what);
         }
 
     }
@@ -50,17 +50,17 @@ public abstract class Log {
         synchronized (locker) {
             log.setLength(0);
             log.trimToSize();
-            for (final Log.Callback callback : callbacks) callback.onClear();
+            for (final LogRtlAis.Callback callback : callbacks) callback.onClear();
         }
     }
 
-    public static void registerCallback(final Log.Callback callback) {
+    public static void registerCallback(final LogRtlAis.Callback callback) {
         synchronized (locker) {
             if (!callbacks.contains(callback)) callbacks.add(callback);
         }
     }
 
-    public static void unregisterCallback(final Log.Callback callback) {
+    public static void unregisterCallback(final LogRtlAis.Callback callback) {
         synchronized (locker) {
             callbacks.remove(callback);
         }
@@ -68,7 +68,7 @@ public abstract class Log {
 
     public static void announceStateChanged(final boolean state) {
         synchronized (locker) {
-            for (final Log.Callback callback : callbacks) callback.onServiceStatusChanged(state);
+            for (final LogRtlAis.Callback callback : callbacks) callback.onServiceStatusChanged(state);
         }
     }
 

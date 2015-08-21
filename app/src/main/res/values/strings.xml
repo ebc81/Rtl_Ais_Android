@@ -62,5 +62,6 @@
     <string name="exception_NOT_ENOUGH_POWER">Your Android device does not provide enough power to the dongle. You must use an externally powered USB hub or an externally powered USB OTG cable.</string>
     <string name="exception_AIS_DECODER">Internal AIS decoder failed</string>
     <string name="rtl_ais_android_exec">rtl_ais_android</string>
+    <string name="off">Kill</string>
 
 </resources>
