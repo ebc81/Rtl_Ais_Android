@@ -40,6 +40,7 @@
 //#include "config.h"
 #include "sounddecoder.h"
 #include "callbacks.h"
+#include <netdb.h>
 
 #include "../rtl_ais_andro.h"
 
@@ -124,6 +125,8 @@ int free_ais_decoder(void)
 
 int initSocket(const char *host, const char *portname) {
     struct addrinfo hints;
+	int iPort;
+	char tempPort[50];
     memset(&hints, 0, sizeof(hints));
     hints.ai_family=AF_UNSPEC;
     hints.ai_socktype=SOCK_DGRAM;
@@ -131,16 +134,19 @@ int initSocket(const char *host, const char *portname) {
 #ifndef WIN32
     hints.ai_flags=AI_ADDRCONFIG;
 #else
-
     int iResult = WSAStartup(MAKEWORD(2, 2), &wsaData);
     if (iResult != 0) {
         aprintf_stderr("WSAStartup failed: %d\n", iResult);
         return 0;
     }
 #endif
-    int err=getaddrinfo(host, portname, &hints, &addr);
+    iPort = atoi(portname);
+	sprintf(tempPort,"%d",iPort);
+	if ( addr != NULL )
+		freeaddrinfo(addr);
+	int err=getaddrinfo(host, tempPort, &hints, &addr);
     if (err!=0) {
-        aprintf_stderr( "Failed to resolve remote socket address!\n");
+        aprintf_stderr( "Failed to resolve remote socket address! host=%s portname=%s err=%s\n",host,portname, gai_strerror(err));
 #ifdef WIN32
         WSACleanup();
 #endif
