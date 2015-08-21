@@ -146,7 +146,7 @@ int nearest_bandwidth(rtlsdr_dev_t *dev, int target_bandwidth)
         return count;
     }
     widths = malloc(sizeof(int) * count);
-    count = rtlsdr_get_tuner_gains(dev, widths);
+    count = rtlsdr_get_tuner_bandwidths(dev, widths);
     nearest = widths[0];
     for (i=0; i<count; i++) {
         err1 = abs(target_bandwidth - nearest);

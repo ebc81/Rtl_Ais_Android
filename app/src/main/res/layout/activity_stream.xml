@@ -81,6 +81,14 @@
                     android:ems="10"
                     android:hint="@string/args_hint"
                     android:text="@string/default_args" />
+
+                <Button
+                    android:id="@+id/bt_default"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentTop="true"
+                    android:text="@string/bt_default" />
             </LinearLayout>
 
             <RelativeLayout

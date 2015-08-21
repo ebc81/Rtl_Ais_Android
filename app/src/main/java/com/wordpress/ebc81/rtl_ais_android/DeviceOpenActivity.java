@@ -99,7 +99,7 @@ public class DeviceOpenActivity extends FragmentActivity implements BinaryRunner
         StrRes.res = getResources();
 
         final Uri data = getIntent().getData();
-        arguments = data.toString().replace("iqsrc://", ""); // quick and dirty fix; me don't like it
+        arguments = data.toString().replace(getString(R.string.intent_filter_schema)+"://", ""); // quick and dirty fix; me don't like it
 
         intent = getIntent();
 

@@ -151,3 +151,4 @@ int verbose_reset_buffer(rtlsdr_dev_t *dev);
 int verbose_device_search(char *s);
 
 int nearest_bandwidth(rtlsdr_dev_t *dev, int target_bandwidth);
+int verbose_set_bandwidth(rtlsdr_dev_t *dev, uint32_t bandwidth);

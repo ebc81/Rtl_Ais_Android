@@ -759,7 +759,8 @@ void rtl_ais_main(int usbfd, const char * uspfs_path_input, int argc, char **arg
 	int custom_ppm = 0;
     int custom_bandwidth = 0;
     int use_autotune = 0;
-    int bandwidth = 0;
+    int bandwidth = 300000;
+	int used_bandwidth;
 	int left_freq = 161975000;
 	int right_freq = 162025000;
 	int sample_rate = 24000;
@@ -805,7 +806,13 @@ void rtl_ais_main(int usbfd, const char * uspfs_path_input, int argc, char **arg
 	pthread_cond_init(&ready, NULL);
 	pthread_mutex_init(&ready_m, NULL);
 
-	while ((opt = getopt(argc, argv, "l:r:s:o:EOD:d:g:p:RAP:w:h:nLS:ax?")) != -1)
+	aprintf_stderr("Arguments received argc =%d ",argc );
+	for ( i = 0; i < argc ; i++)
+	{
+		aprintf_stderr("argv[%d]=%s\n",i,argv[i] );
+	}
+	
+	while ((opt = getopt(argc, argv, "l:r:s:o:d:g:p:P:w:h:S:EODRAnLax")) != -1)
 	{
 		switch (opt) {
 		case 'l':
@@ -820,6 +827,39 @@ void rtl_ais_main(int usbfd, const char * uspfs_path_input, int argc, char **arg
 		case 'o':
 			output_rate = (int)atofs(optarg);
 			break;
+		case 'd':
+			dev_index = verbose_device_search(optarg);
+			dev_given = 1;
+			break;	
+		case 'g':
+			gain = (int)(atof(optarg) * 10);
+			break;
+		case 'p':
+			ppm_error = atoi(optarg);
+			custom_ppm = 1;
+			aprintf_stderr(">>>>>>>>>>>>>>>>>>>>>ppm_error %d \n",ppm_error);
+			break;
+		case 'P':
+			strncpy(ais_port,optarg,sizeof(ais_port));			
+
+			if ((pos=strchr(ais_port, '\n')) != NULL)
+				*pos = '\0';
+			//ais_port=strdup(optarg);
+			break;
+		case 'w':
+			bandwidth = atoi(optarg);
+			custom_bandwidth = 1;
+			break;
+		case 'h':
+			strncpy(ais_host,optarg,sizeof(ais_host));
+			if ((pos=strchr(ais_host, '\n')) != NULL)
+				*pos = '\0';
+			//ais_host=strdup(optarg);
+			break;		
+		case 'S':
+			seconds_for_decoder_stats=atoi(optarg);
+			break;
+		
 		case 'E':
 			edge = !edge;
 			break;
@@ -829,40 +869,11 @@ void rtl_ais_main(int usbfd, const char * uspfs_path_input, int argc, char **arg
         case 'D':
             dc_filter = !dc_filter;
             break;
-		case 'd':
-			dev_index = verbose_device_search(optarg);
-			dev_given = 1;
-			break;
-		case 'g':
-			gain = (int)(atof(optarg) * 10);
-			break;
-		case 'p':
-			ppm_error = atoi(optarg);
-			custom_ppm = 1;
-			aprintf_stderr("ppm_error %d \n",ppm_error);
-			break;
 		case 'R':
 			rtl_agc=1;
 			break;
 		case 'A':
 			use_internal_aisdecoder=0;
-			break;
-		case 'P':
-			strncpy(ais_port,optarg,sizeof(ais_port));			
-			
-			if ((pos=strchr(ais_port, '\n')) != NULL)
-				*pos = '\0';
-			//ais_port=strdup(optarg);
-			break;
-        case 'w':
-            bandwidth = atoi(optarg);
-            custom_bandwidth = 1;
-            break;
-		case 'h':
-			strncpy(ais_host,optarg,sizeof(ais_host));
-			if ((pos=strchr(ais_host, '\n')) != NULL)
-				*pos = '\0';
-			//ais_host=strdup(optarg);
 			break;
         case 'n':
             debug_nmea = 1;
@@ -870,9 +881,6 @@ void rtl_ais_main(int usbfd, const char * uspfs_path_input, int argc, char **arg
             break;
 		case 'L':
 			show_levels=1;
-			break;
-		case 'S':
-			seconds_for_decoder_stats=atoi(optarg);
 			break;
         case 'a':
             use_autotune = 1;
@@ -976,6 +984,7 @@ void rtl_ais_main(int usbfd, const char * uspfs_path_input, int argc, char **arg
 	}
 	if (use_internal_aisdecoder) {
 		aprintf_stderr( "Internal AIS decoder enabled.\n");
+		aprintf_stderr( " AIS decoder seconds for stat = %d.\n",seconds_for_decoder_stats);
 	} else {
 		aprintf_stderr( "Internal AIS decoder disabled.\n");
 	}
@@ -1105,7 +1114,7 @@ void rtl_ais_main(int usbfd, const char * uspfs_path_input, int argc, char **arg
 
     count = rtlsdr_get_tuner_gains(dev, gains);
     for (i = 0; i < count; i++)
-        aprintf_stderr( "%.1f ", gains[i] / 10.0);
+        aprintf_stderr( " %.1f ", gains[i] / 10.0);
     aprintf_stderr( "\n");
 	
 	
@@ -1136,16 +1145,15 @@ void rtl_ais_main(int usbfd, const char * uspfs_path_input, int argc, char **arg
 
     count = rtlsdr_get_tuner_bandwidths(dev, bandwidths);
     for (i = 0; i < count; i++)
-        aprintf_stderr( "%d ", bandwidths[i]);
+        aprintf_stderr( " %d ", bandwidths[i]);
     aprintf_stderr( "\n");	
-	
-	
-	//ebc TO DO bandwidth is never used, should used here
-	verbose_set_bandwidth(dev, 300000);
-    
+
+	used_bandwidth = nearest_bandwidth(dev,bandwidth);
+	verbose_set_bandwidth(dev, used_bandwidth);
+    aprintf_stderr( "Set bandwidth to (%d): \n", used_bandwidth);
 	
 	verbose_ppm_set(dev, ppm_error);
-	aprintf_stderr("ppm_error %d \n",ppm_error);
+	aprintf_stderr("set ppm_error to  %d \n",ppm_error);
 	
 	/* Set the tuner frequency */
 	verbose_set_frequency(dev, dongle_freq);

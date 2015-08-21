@@ -140,10 +140,12 @@ int initSocket(const char *host, const char *portname) {
         return 0;
     }
 #endif
-    iPort = atoi(portname);
+    //ebc test work around due some strange problems 
+	iPort = atoi(portname);
 	sprintf(tempPort,"%d",iPort);
 	if ( addr != NULL )
 		freeaddrinfo(addr);
+	//---
 	int err=getaddrinfo(host, tempPort, &hints, &addr);
     if (err!=0) {
         aprintf_stderr( "Failed to resolve remote socket address! host=%s portname=%s err=%s\n",host,portname, gai_strerror(err));

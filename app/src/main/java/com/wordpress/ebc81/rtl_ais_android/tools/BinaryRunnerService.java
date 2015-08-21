@@ -31,7 +31,6 @@ import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
 import android.os.PowerManager;
-import android.util.Log;
 
 import com.wordpress.ebc81.rtl_ais_android.R;
 import com.wordpress.ebc81.rtl_ais_android.StreamActivity;
@@ -82,7 +81,7 @@ public class BinaryRunnerService extends Service {
     public void start(final String args, final int fd, final String uspfs_path) {
         try {
 
-            Log.i(TAG, "--------------------Rtl Ais driver START");
+            //Log.i(TAG, "--------------------Rtl Ais driver START");
 
             if (args == null) {
                 LogRtlAis.appendLine("Service did receive null argument.");
@@ -92,7 +91,7 @@ public class BinaryRunnerService extends Service {
             }
 
             if ( args.equals("-exit") ) {
-                Log.i(TAG, "Rtl Ais driver will be closed");
+                //Log.i(TAG, "Rtl Ais driver will be closed");
                 LogRtlAis.appendLine("Service did receive exit argument");
                 stopForeground(true);
                 System.exit(0);
@@ -205,7 +204,7 @@ public class BinaryRunnerService extends Service {
     @SuppressLint("NewApi")
     @Override
     public void onDestroy() {
-        Log.i(TAG,"Rtl Ais driver onDestroy");
+        //Log.i(TAG,"Rtl Ais driver onDestroy");
         RtlAisJava.stop();
 
         stopForeground(true);

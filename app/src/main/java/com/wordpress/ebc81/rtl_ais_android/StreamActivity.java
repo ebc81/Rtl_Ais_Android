@@ -50,6 +50,7 @@ public class StreamActivity extends FragmentActivity implements LogRtlAis.Callba
 
     public static final String PREFS_NAME = "rtl_ais_androidPREFS";
     public static final String DISABLE_JAVA_FIX_PREF = "disable.java.usb.fix";
+    public static final String CMD_LINE_TEXT_PREF = "perf_cmdl_text";
 
     private TextView terminal;
     private ScrollView scroll;
@@ -69,6 +70,9 @@ public class StreamActivity extends FragmentActivity implements LogRtlAis.Callba
         terminal = (TextView) findViewById(R.id.terminal);
         scroll = (ScrollView) findViewById(R.id.ScrollArea);
         arguments = (EditText) findViewById(R.id.commandline);
+
+        String argperf = prefs.getString(CMD_LINE_TEXT_PREF,arguments.getText().toString());
+        arguments.setText(argperf);
 
         terminal.setText(LogRtlAis.getFullLog());
 
@@ -102,8 +106,25 @@ public class StreamActivity extends FragmentActivity implements LogRtlAis.Callba
             public void onClick(View v) {
                 onoff.setChecked(false);
                 LogRtlAis.clear();
-                String d3ebug = arguments.getText().toString();
-                startActivityForResult(new Intent(Intent.ACTION_VIEW).setData(Uri.parse("iqsrc://" + arguments.getText().toString())), START_REQ_CODE);
+                String argumentStr = arguments.getText().toString();
+                startActivityForResult(new Intent(Intent.ACTION_VIEW).setData(Uri.parse(getString(R.string.intent_filter_schema)+"://" + arguments.getText().toString())), START_REQ_CODE);
+                if (!argumentStr.isEmpty()) {
+                    final SharedPreferences.Editor editor = prefs.edit();
+                    editor.putString(CMD_LINE_TEXT_PREF, argumentStr);
+                    editor.commit();
+                }
+            }
+        });
+
+
+        ((Button) findViewById(R.id.bt_default)).setOnClickListener(new Button.OnClickListener() {
+
+            //@SuppressWarnings("deprecation")
+            //@SuppressLint("NewApi")
+            @Override
+            public void onClick(View v) {
+
+                arguments.setText(getString(R.string.default_args));
             }
         });
 
@@ -114,7 +135,7 @@ public class StreamActivity extends FragmentActivity implements LogRtlAis.Callba
             @Override
             public void onClick(View v) {
 
-                startActivityForResult(new Intent(Intent.ACTION_VIEW).setData(Uri.parse("iqsrc://-exit")), START_REQ_CODE);
+                startActivityForResult(new Intent(Intent.ACTION_VIEW).setData(Uri.parse(getString(R.string.intent_filter_schema)+"://-exit")), START_REQ_CODE);
             }
         });
 

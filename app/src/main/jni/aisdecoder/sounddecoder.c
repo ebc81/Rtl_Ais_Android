@@ -28,12 +28,12 @@
 #include "receiver.h"
 #include "hmalloc.h"
 
-#define MAX_FILENAME_SIZE 512
-#define ERROR_MESSAGE_LENGTH 1024
+//#define MAX_FILENAME_SIZE 512
+//#define ERROR_MESSAGE_LENGTH 1024
 #include "sounddecoder.h"
+#include "../rtl_ais_andro.h"
 
-
-char errorSoundDecoder[ERROR_MESSAGE_LENGTH];
+//char errorSoundDecoder[ERROR_MESSAGE_LENGTH];
 
 static struct receiver *rx_a=NULL;
 static struct receiver *rx_b=NULL;
@@ -81,12 +81,14 @@ void run_mem_decoder(short * buf, int len,int max_buf_len)
 	{
 		struct demod_state_t *d = rx_a->decoder;
 		tprev=time(NULL);
-		fprintf(stderr,
+		//fprintf(stderr,
+		aprintf_stderr(
 				"A: Received correctly: %d packets, wrong CRC: %d packets, wrong size: %d packets\n",
 				d->receivedframes, d->lostframes,
 				d->lostframes2);
 		d = rx_b->decoder;
-			fprintf(stderr,
+		aprintf_stderr(	
+		//fprintf(stderr,
 				"B: Received correctly: %d packets, wrong CRC: %d packets, wrong size: %d packets\n",
 				d->receivedframes, d->lostframes,
 				d->lostframes2);
