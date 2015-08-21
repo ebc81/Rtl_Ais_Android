@@ -5,9 +5,6 @@
 .DS_Store
 /build
 /captures
-# Built application files
-*.apk
-*.ap_
 # Shared objects (inc. Windows DLLs)
 *.dll
 *.so
