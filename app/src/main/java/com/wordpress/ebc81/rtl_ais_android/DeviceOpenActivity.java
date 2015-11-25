@@ -40,10 +40,12 @@ import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 
 import com.wordpress.ebc81.rtl_ais_android.core.RtlException;
 import com.wordpress.ebc81.rtl_ais_android.tools.BinaryRunnerService;
 import com.wordpress.ebc81.rtl_ais_android.tools.BinaryRunnerService.LocalBinder;
+import com.wordpress.ebc81.rtl_ais_android.tools.CmdLineHelper;
 import com.wordpress.ebc81.rtl_ais_android.tools.DialogManager;
 import com.wordpress.ebc81.rtl_ais_android.tools.LogRtlAis;
 import com.wordpress.ebc81.rtl_ais_android.tools.RtlStartException;
@@ -78,6 +80,7 @@ public class DeviceOpenActivity extends FragmentActivity implements BinaryRunner
             mService = binder.getService(DeviceOpenActivity.this);
             mBound = true;
             mService.start(args, fd, uspfs_path);
+
         }
 
         @Override
@@ -87,7 +90,7 @@ public class DeviceOpenActivity extends FragmentActivity implements BinaryRunner
         }
     };
 
-    //@SuppressLint("NewApi")
+    //
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -99,17 +102,20 @@ public class DeviceOpenActivity extends FragmentActivity implements BinaryRunner
         StrRes.res = getResources();
 
         final Uri data = getIntent().getData();
-        arguments = data.toString().replace(getString(R.string.intent_filter_schema)+"://", ""); // quick and dirty fix; me don't like it
+        arguments = data.toString().replace(getString(R.string.intent_filter_schema) + "://", ""); // quick and dirty fix; me don't like it
+
+        Log.i("TEST", "onCreate");
 
         intent = getIntent();
 
     }
 
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-
+    /**
+     *
+     */
+    private void doUSBBasic()
+    {
         try {
             permissionIntent = PendingIntent.getBroadcast(this, 0, new Intent("com.android.example.USB_PERMISSION"), 0);
             registerReceiver(mUsbReceiver, new IntentFilter("com.android.example.USB_PERMISSION"));
@@ -134,14 +140,29 @@ public class DeviceOpenActivity extends FragmentActivity implements BinaryRunner
         } catch (Exception e) {
             finishWithError(e);
         }
+    }
 
+
+
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Log.i("TEST", "onStart");
+        doUSBBasic();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.i("TEST", "onDestroy");
     }
 
 
     @Override
     protected void onStop() {
         super.onStop();
-
+        Log.i("TEST", "onStop");
         try {
             unregisterReceiver(mUsbReceiver);
         } catch (Throwable e) {};
@@ -153,6 +174,11 @@ public class DeviceOpenActivity extends FragmentActivity implements BinaryRunner
         }
     }
 
+     /**
+     *
+     * @param id
+     * @param args
+     */
     public void showDialog(final DialogManager.dialogs id, final String ... args) {
 
         final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
@@ -231,10 +257,11 @@ public class DeviceOpenActivity extends FragmentActivity implements BinaryRunner
 
 
     /**
-     * Starts the tcp binary
+     * Starts the rtl ais binary
      */
     public void startBinary(final String arguments, final int fd, final String uspfs_path) {
         try {
+            Log.v("TEST", "startBinary");
             //start the service
             this.args = arguments;
             this.fd = fd;

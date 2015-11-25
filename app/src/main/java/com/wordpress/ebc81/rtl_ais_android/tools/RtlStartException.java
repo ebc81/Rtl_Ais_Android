@@ -30,7 +30,8 @@ public class RtlStartException extends Exception {
         no_devices_found,
         unknown_error,
         replug,
-        already_running
+        already_running,
+        not_running,
     }
 
     //private static final long serialVersionUID = -2093258176426113336L;

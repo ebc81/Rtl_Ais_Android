@@ -139,7 +139,7 @@ public class RtlAisJava {
             close();
             try {
                 synchronized (locker) {
-                    locker.wait(5000);
+                    locker.wait(4000);
                 }
             } catch (InterruptedException e) {}
 

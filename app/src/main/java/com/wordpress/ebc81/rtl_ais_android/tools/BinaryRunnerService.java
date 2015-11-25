@@ -78,10 +78,58 @@ public class BinaryRunnerService extends Service {
         return START_STICKY;
     }
 
+    public boolean isRunning()
+    {
+        return  RtlAisJava.isNativeRunning();
+    }
+
+
+    /**
+     *  Makes a pre-filtering of Intent cmds
+     */
+    /*
+    private void preSelectAction()
+    {
+        int cmd = CmdLineHelper.getCmd(arguments);
+        switch ( cmd )
+        {
+            case CmdLineHelper.RTL_AIS_ANDROID_CMD_STATUS:
+                Log.i("TEST", "RTL_AIS_ANDROID_CMD_STATUS");
+                if (mBound && mService != null && mService.isRunning() )
+                    finishWithError(RtlStartException.err_info.not_running);
+                else
+                    finishWithError();
+                break;
+
+            // not really necessary but anyway could be useful for someone
+            case CmdLineHelper.RTL_AIS_ANDROID_CMD_STOP:
+                Log.i("TEST", "RTL_AIS_ANDROID_CMD_STOP mbound = " + mBound );
+                if (mBound && mService != null && mService.isRunning() ) {
+                    mService.stop();
+                }
+                try {
+                    Thread.sleep(500);
+                } catch (Throwable t) {}
+
+                finish();
+                break;
+            case CmdLineHelper.RTL_AIS_ANDROID_CMD_START:
+                Log.i("TEST", "RTL_AIS_ANDROID_CMD_START");
+                doUSBBasic();
+                break;
+
+            default:
+            case CmdLineHelper.RTL_AIS_ANDROID_CMD_UNKNOWN:
+                break;
+        }
+    }*/
+
+
+
     public void start(final String args, final int fd, final String uspfs_path) {
         try {
 
-            //Log.i(TAG, "--------------------Rtl Ais driver START");
+            //Log.i(TAG, "--------------------Rtl Ais driver START with arugumets="+ args);
 
             if (args == null) {
                 LogRtlAis.appendLine("Service did receive null argument.");
@@ -90,13 +138,33 @@ public class BinaryRunnerService extends Service {
                 return;
             }
 
-            if ( args.equals("-exit") ) {
-                //Log.i(TAG, "Rtl Ais driver will be closed");
-                LogRtlAis.appendLine("Service did receive exit argument");
-                stopForeground(true);
-                System.exit(0);
-                return;
+            int cmd = CmdLineHelper.getCmd(args);
+            switch ( cmd )
+            {
+                case CmdLineHelper.RTL_AIS_ANDROID_CMD_STATUS:
+                    if ( RtlAisJava.isNativeRunning()) {
+                        for (final ExceptionListener listener : exception_listeners)
+                            listener.onStarted();
+                    }
+                    else {
+                        final Exception e = new Exception("Service is stopped");
+                        for (final ExceptionListener listener : exception_listeners)
+                            listener.onException(e);
+                    }
+                    return;
+
+                case CmdLineHelper.RTL_AIS_ANDROID_CMD_STOP:
+                    RtlAisJava.stop();
+                    try {
+                        Thread.sleep(2000);
+                    } catch (Throwable t) {}
+                    stopForeground(true);
+                    System.exit(0);
+                    return;
             }
+
+
+
 
             accummulated_errors.clear();
 
@@ -145,7 +213,8 @@ public class BinaryRunnerService extends Service {
                     else
                         LogRtlAis.appendLine("Exit code: " + exitvalue + "\n");
 
-                    for (final ExceptionListener listener : exception_listeners) listener.onException(e);
+                    for (final ExceptionListener listener : exception_listeners)
+                        listener.onException(e);
                     if (e != null) accummulated_errors.add(e);
 
                     stopSelf();
@@ -153,8 +222,9 @@ public class BinaryRunnerService extends Service {
 
                 @Override
                 public void OnOpened() {
-                    for (final ExceptionListener listener : exception_listeners) listener.onStarted();
-                        LogRtlAis.announceStateChanged(true);
+                    for (final ExceptionListener listener : exception_listeners)
+                        listener.onStarted();
+                    LogRtlAis.announceStateChanged(true);
                 }
 
 

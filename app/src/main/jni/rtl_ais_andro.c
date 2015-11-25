@@ -1230,9 +1230,9 @@ void rtl_ais_main(int usbfd, const char * uspfs_path_input, int argc, char **arg
 	closesocket(s);
 
 	if (do_exit) {
-		aprintf_stderr( "\nUser cancel, exiting...\n");}
-	else {
-		aprintf_stderr( "\nLibrary error %d, exiting...\n", r);
+		aprintf_stderr( "\nUser cancel, exiting...\n");
+	}else {
+		aprintf_stderr( "\nLibrary error %d, exiting...\n");
 	}
 	if ( dev != NULL )
 		rtlsdr_cancel_async(dev);
@@ -1256,8 +1256,7 @@ void rtl_ais_main(int usbfd, const char * uspfs_path_input, int argc, char **arg
 
 	announce_exceptioncode(com_wordpress_ebc81_rtl_ais_android_core_RtlAisJava_EXIT_OK);
 	set_isrunning(0);
-	aprintf("rtl_ais_andro says bye! ");
+	aprintf_stderr("rtl_ais_andro says bye! \n");
 	return;// r >= 0 ? r : -r;
 }
 
-// vim: tabstop=8:softtabstop=8:shiftwidth=8:noexpandtab
